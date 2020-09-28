@@ -1,0 +1,98 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jruyi.thrift' version '0.4.1'
+}
+
+sourceCompatibility = '1.8'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.apache.thrift:libthrift:0.13.0'
+    testImplementation 'junit:junit:4.13'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+        }
+    }
+    generated {
+        java {
+            srcDirs 'src/generated/gen-java'
+        }
+    }
+}
+
+application {
+    mainClassName = 'com.demo.App'
+}
+
+/* ------------------------------------------- *\
+                  Thrift Tasks
+\* ------------------------------------------- */
+
+compileThrift {
+    group 'thrift'
+    recurse true
+
+    generator 'cpp', 'no_skeleton'
+    generator 'java', 'private-members'
+    outputDir "${buildDir}/thrift-gen"
+
+    doLast {
+        copy {
+            from "${buildDir}/thrift-gen/gen-cpp"
+            into "${projectDir}/src/main/cpp/gen"
+        }
+        copy {
+            from "${buildDir}/thrift-gen/gen-java"
+            into "${projectDir}/src/generated/java"
+        }
+    }
+}
+
+task cleanThrift(type: Delete, group: 'thrift') {
+    delete "${buildDir}/thrift-gen"
+    delete "${projectDir}/src/main/cpp/gen"
+    delete "${projectDir}/src/generated/java"
+}
+
+/* ------------------------------------------- *\
+                   C++ Tasks
+\* ------------------------------------------- */
+
+task makeNative(type: Exec, group: 'native', description: 'Make c++ executables') {
+    commandLine 'make', '-C', "${projectDir}/src/main/cpp", 'all'
+
+    doLast {
+        copy {
+            from "${projectDir}/src/main/cpp/exec"
+            into "${projectDir}/src/main/dist/exec"
+        }
+    }
+}
+
+task cleanNative(type: Exec, group: 'native', description: 'Run make clean') {
+    commandLine 'make', '-C', "${projectDir}/src/main/cpp", 'clean'
+
+    doLast {
+        delete "${projectDir}/src/main/dist/exec"
+    }
+}
+
+/* ------------------------------------------- *\
+               Task Dependencies
+\* ------------------------------------------- */
+
+tasks {
+    clean.dependsOn(cleanNative)
+    clean.dependsOn(cleanThrift)
+    makeNative.dependsOn(compileThrift)
+    run.dependsOn(makeNative)
+    jar.dependsOn(makeNative)
+}

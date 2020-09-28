@@ -1,0 +1,10 @@
+.gradle/
+
+*.o
+*.class
+
+build/
+src/generated/
+src/main/cpp/gen/
+src/main/cpp/exec/
+src/main/dist/exec/
