@@ -20,7 +20,6 @@ $ tar -zxvf thrift-0.13.0.tar.gz
 $ cd thrift-0.13.0
 $ ./configure
 $ make
-$ sudo make install
 ```
 
 ## Build and run
