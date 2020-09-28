@@ -28,15 +28,15 @@ $ sudo make install
 - Build application
 
 ```
-$ ./gradlew clean build distTar
+$ ./gradlew clean build
 ```
 
 - Run application
 
 ```
-# Run server
+# Run server first
 $ ./src/main/dist/exec/server
 
-# Run client
+# Run client later
 $ ./gradlew run
 ```

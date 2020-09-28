@@ -12,6 +12,10 @@ repositories {
 
 dependencies {
     compile 'org.apache.thrift:libthrift:0.13.0'
+
+    compile 'org.slf4j:slf4j-api:1.7.30'
+    compile 'org.slf4j:slf4j-simple:1.7.30'
+
     testImplementation 'junit:junit:4.13'
 }
 
@@ -93,6 +97,5 @@ tasks {
     clean.dependsOn(cleanNative)
     clean.dependsOn(cleanThrift)
     makeNative.dependsOn(compileThrift)
-    run.dependsOn(makeNative)
     jar.dependsOn(makeNative)
 }

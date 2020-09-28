@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.make": "makefile",
+        "Makefile2": "makefile",
+        "new": "cpp"
+    }
+}
