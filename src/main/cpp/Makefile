@@ -10,7 +10,7 @@ EXEC_DIR = exec
 
 # Compiler options
 CFLAGS := $(CFLAGS) -DDEBUG # -g
-CFLAGS := $(CFLAGS) -static-libgcc -static-libstdc++ # -static-intel
+#CFLAGS := $(CFLAGS) -static-libgcc -static-libstdc++ # -static-intel
 CFLAGS := $(CFLAGS) -fstrict-aliasing
 CFLAGS := $(CFLAGS) -std=c++11
 CFLAGS := $(CFLAGS) -fPIC
