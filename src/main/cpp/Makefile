@@ -2,7 +2,7 @@ CC := g++ #icpc
 CPY := cp -v
 REM := rm -rfv
 MKDIR := mkdir -pv
-NPROCS := 1
+NPROCS ?= 1
 OS := $(shell uname -s)
 
 ifeq ($(OS),Windows_NT)
@@ -22,22 +22,22 @@ HEADER_DIR := include
 BIN_DIR := bin
 
 # Compiler options
-CFLAGS := $(CFLAGS) -DDEBUG # -g
-#CFLAGS := $(CFLAGS) -static-libgcc -static-libstdc++ # -static-intel
-CFLAGS := $(CFLAGS) -fstrict-aliasing
-CFLAGS := $(CFLAGS) -std=c++11
-CFLAGS := $(CFLAGS) -fPIC
-CFLAGS := $(CFLAGS) -O2
-CFLAGS := $(CFLAGS) -Wall
+CFLAGS += -DDEBUG # -g
+#CFLAGS += -static-libgcc -static-libstdc++ # -static-intel
+CFLAGS += -fstrict-aliasing
+CFLAGS += -std=c++11
+CFLAGS += -fPIC
+CFLAGS += -O2
+CFLAGS += -Wall
 
 # Includes
-IFLAGS := $(IFLAGS) -I./$(GEN_DIR)
-IFLAGS := $(IFLAGS) -I./$(HEADER_DIR)
+IFLAGS += -I./$(GEN_DIR)
+IFLAGS += -I./$(HEADER_DIR)
 
 # Library flags
-LDFLAGS := $(LDFLAGS) -lrt
-LDFLAGS := $(LDFLAGS) -lpthread
-LDFLAGS := $(LDFLAGS) -lthrift
+LDFLAGS += -lrt
+LDFLAGS += -lpthread
+LDFLAGS += -lthrift
 
 # Object file collections
 GEN_SOURCES := $(shell find $(GEN_DIR) -name '*.cpp')
