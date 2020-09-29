@@ -71,7 +71,7 @@ task cleanThrift(type: Delete, group: 'thrift') {
 \* ------------------------------------------- */
 
 task makeNative(type: Exec, group: 'native', description: 'Make c++ executables') {
-    commandLine 'make', '-C', "${projectDir}/src/main/cpp", 'all'
+    commandLine 'make', '-s', '-C', "${projectDir}/src/main/cpp", 'all'
 
     doLast {
         copy {
@@ -82,7 +82,7 @@ task makeNative(type: Exec, group: 'native', description: 'Make c++ executables'
 }
 
 task cleanNative(type: Exec, group: 'native', description: 'Run make clean') {
-    commandLine 'make', '-C', "${projectDir}/src/main/cpp", 'clean'
+    commandLine 'make', '-s', '-C', "${projectDir}/src/main/cpp", 'clean'
 
     doLast {
         delete "${projectDir}/src/main/dist/exec"
