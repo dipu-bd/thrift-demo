@@ -1,12 +1,25 @@
-# Commands
-CC=g++ #icpc
-CPY = cp -v
-REM = rm -rfv
-MKDIR = mkdir -pv
+CC := g++ #icpc
+CPY := cp -v
+REM := rm -rfv
+MKDIR := mkdir -pv
+NPROCS := 1
+OS := $(shell uname -s)
+
+ifeq ($(OS),Windows_NT)
+  $(error Unsupported platform)
+endif
+ifeq ($(OS),Linux)
+  NPROCS:=$(shell grep -c ^processor /proc/cpuinfo)
+endif
+ifeq ($(OS),Darwin) # Assume Mac OS X
+  NPROCS:=$(shell system_profiler | awk '/Number Of CPUs/{print $4}{next;}')
+endif
 
 # Directories
-GEN_DIR = gen
-EXEC_DIR = exec
+GEN_DIR := gen
+BUILD_DIR := build
+HEADER_DIR := include
+BIN_DIR := bin
 
 # Compiler options
 CFLAGS := $(CFLAGS) -DDEBUG # -g
@@ -16,34 +29,31 @@ CFLAGS := $(CFLAGS) -std=c++11
 CFLAGS := $(CFLAGS) -fPIC
 CFLAGS := $(CFLAGS) -O2
 CFLAGS := $(CFLAGS) -Wall
-CFLAGS := $(CFLAGS) -I./include -I./$(GEN_DIR)
 
+# Includes
+IFLAGS := $(IFLAGS) -I./$(GEN_DIR)
+IFLAGS := $(IFLAGS) -I./$(HEADER_DIR)
+
+# Library flags
 LDFLAGS := $(LDFLAGS) -lrt
-LDFLAGS := $(LDFLAGS) -lthrift
 LDFLAGS := $(LDFLAGS) -lpthread
+LDFLAGS := $(LDFLAGS) -lthrift
 
 # Object file collections
-GEN_SHARED = $(GEN_DIR)/shared_types.o \
-	$(GEN_DIR)/shared_constants.o
+GEN_SOURCES := $(shell find $(GEN_DIR) -name '*.cpp')
+GEN_OBJECTS := $(addprefix $(BUILD_DIR)/,$(GEN_SOURCES:%.cpp=%.o))
 
-GEN_SERVICE = $(GEN_SHARED) \
-	$(GEN_DIR)/Service.o \
-	$(GEN_DIR)/service_types.o \
-	$(GEN_DIR)/service_constants.o
+# Define Targets
+all :: $(BIN_DIR)/server
 
-# NOTE: Indent using Tabs, otherwise build will fail!
-all: server
+clean ::
+	@$(REM) $(BIN_DIR) $(BUILD_DIR)
 
-run: server
-	./$(EXEC_DIR)/server
+$(BUILD_DIR)/%.o: %.cpp
+	@$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@ $(LDFLAGS)
 
-server: $(GEN_SERVICE) server.o
-	$(MKDIR) $(EXEC_DIR)
-	$(CC) $(CFLAGS) $^ -o $(EXEC_DIR)/$@ $(LDFLAGS)
-
-clean:
-	$(REM) $(EXEC_DIR)
-	$(REM) *.o $(GEN_DIR)/*.o
-
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
+$(BIN_DIR)/%:
+	@$(MAKE) -j$(NPROCS) $(GEN_OBJECTS) $(BUILD_DIR)/$*.o
+	@$(MKDIR) $(BIN_DIR)
+	$(CC) $(CFLAGS) $(GEN_OBJECTS) $(BUILD_DIR)/$*.o -o $@ $(LDFLAGS)

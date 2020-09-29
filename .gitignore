@@ -1,10 +1,11 @@
-.gradle/
+/.gradle
+
+/build
+/src/generated
+/src/main/cpp/gen
+/src/main/cpp/bin
+/src/main/cpp/build
+/src/main/dist/exec
 
 *.o
 *.class
-
-build/
-src/generated/
-src/main/cpp/gen/
-src/main/cpp/exec/
-src/main/dist/exec/

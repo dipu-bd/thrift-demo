@@ -31,15 +31,11 @@ void read_arguments(int argc, char **argv)
         {
             host = optarg;
         }
-        else
-        {
-            fprintf(stderr, "Unrecognized argument '%c' with value = %s\n", opt, optarg);
-        }
     }
     if (port <= 0)
     {
-        printf("Error: A valid port is required.\n");
-        printf("USAGE:\n server [-p PORT] [-h HOST]\n");
+        fprintf(stderr, "Error: A valid port is required.\n");
+        fprintf(stderr, "USAGE:\n server [-p PORT] [-h HOST]\n");
         exit(ERR_INVALID_ARGUMENTS);
     }
 }

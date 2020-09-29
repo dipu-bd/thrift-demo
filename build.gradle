@@ -75,7 +75,7 @@ task makeNative(type: Exec, group: 'native', description: 'Make c++ executables'
 
     doLast {
         copy {
-            from "${projectDir}/src/main/cpp/exec"
+            from "${projectDir}/src/main/cpp/bin"
             into "${projectDir}/src/main/dist/exec"
         }
     }
