@@ -1,7 +1,7 @@
 CC := g++ #icpc
-CPY := cp -v
-REM := rm -rfv
-MKDIR := mkdir -pv
+CPY := cp
+REM := rm -rf
+MKDIR := mkdir -p
 NPROCS ?= 1
 OS := $(shell uname -s)
 
